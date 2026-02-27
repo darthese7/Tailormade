@@ -1,0 +1,56 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    font-family: Poppins, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+      sans-serif;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply m-0 min-w-[320px] bg-[#f3f3f3] text-text;
+  }
+
+  #root {
+    @apply min-h-screen;
+  }
+
+  input,
+  textarea,
+  select {
+    @apply min-h-12 rounded-xl border-border text-base placeholder:text-muted focus:border-black focus:ring-black/20;
+  }
+}
+
+@layer components {
+  .tap-feedback {
+    @apply transition-all duration-150 active:scale-[0.98];
+  }
+
+  .page-title {
+    @apply text-2xl font-bold tracking-tight text-text;
+  }
+
+  .section-title {
+    @apply text-base font-semibold text-text;
+  }
+
+  .metric-value {
+    @apply text-3xl font-bold leading-none text-text;
+  }
+
+  .secondary-text {
+    @apply text-sm text-muted;
+  }
+}
