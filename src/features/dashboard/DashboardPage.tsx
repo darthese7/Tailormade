@@ -108,7 +108,7 @@ export function DashboardPage() {
         />
       ) : null}
 
-      <div className="border-b border-gray-200 pb-4">
+      <div className="-mx-5 border-b border-gray-200 px-5 pb-4">
         <div className="flex items-center justify-between">
           <img src={logo} alt="Tailormade" className="h-8 w-auto" />
 
@@ -150,7 +150,7 @@ export function DashboardPage() {
       <section className="mt-5">
         <h1 className="text-4xl leading-tight tracking-tight">
           <span className="text-gray-500 font-medium">Welcome</span>{' '}
-          <span className="text-black font-semibold">{username ?? 'Ese'},</span>
+          <span className="text-black font-semibold">{username ?? 'Tailor'},</span>
         </h1>
         <p className="mt-2 text-sm text-gray-500 leading-relaxed">
           Ready to take your next measurement?

@@ -26,25 +26,29 @@ import {
 const USE_MOCK_API = !import.meta.env.VITE_API_BASE_URL
 
 export const authService = {
-  requestOtp: async (payload: AuthOtpRequest) => {
+  requestOtp: async (payload: AuthOtpRequest & { mode: 'login' | 'signup' }) => {
+    const endpoint = payload.mode === 'signup' ? endpoints.authRegister : endpoints.authLogin
     try {
       return await apiClient.post<{ success: boolean; message?: string }>(
-        endpoints.authLogin,
-        payload,
+        endpoint,
+        { phone: payload.phone },
       )
     } catch (error) {
       if (isDemoAuthEnabled()) {
-        return requestDemoOtp(payload.phone)
+        return requestDemoOtp(payload.phone, payload.mode)
       }
       throw error
     }
   },
-  verifyOtp: async (payload: AuthOtpVerifyRequest) => {
+  verifyOtp: async (payload: AuthOtpVerifyRequest & { mode: 'login' | 'signup' }) => {
     try {
-      return await apiClient.post<AuthSession>(endpoints.authVerifyOtp, payload)
+      return await apiClient.post<AuthSession>(endpoints.authVerifyOtp, {
+        phone: payload.phone,
+        otp: payload.otp,
+      })
     } catch (error) {
       if (isDemoAuthEnabled()) {
-        return verifyDemoOtp(payload.phone, payload.otp)
+        return verifyDemoOtp(payload.phone, payload.otp, payload.mode)
       }
       throw error
     }

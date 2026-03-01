@@ -36,6 +36,7 @@ export function AuthOtpPage() {
     const session = await mutation.mutateAsync({
       phone: otpPhone,
       otp: values.otp,
+      mode: authMode,
     })
 
     const username = session.username ?? getStoredUsername(session.phone)

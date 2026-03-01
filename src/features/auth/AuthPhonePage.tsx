@@ -32,10 +32,19 @@ export function AuthPhonePage() {
     return <Navigate to="/home" replace />
   }
 
+  let errorText = ''
+  if (mutation.isError && !rateLimitMessage) {
+    if (mutation.error instanceof ApiError) {
+      errorText = mutation.error.message
+    } else {
+      errorText = 'Could not request OTP. Try again.'
+    }
+  }
+
   const onSubmit = handleSubmit(async (values) => {
     setRateLimitMessage('')
     try {
-      await mutation.mutateAsync({ phone: values.phone })
+      await mutation.mutateAsync({ phone: values.phone, mode: authMode })
       setOtpPhone(values.phone)
       navigate('/auth/otp', { replace: true })
     } catch (error) {
@@ -97,9 +106,7 @@ export function AuthPhonePage() {
           />
 
           {rateLimitMessage ? <p className="text-sm text-error">{rateLimitMessage}</p> : null}
-          {mutation.isError && !rateLimitMessage ? (
-            <p className="text-sm text-error">Could not request OTP. Try again.</p>
-          ) : null}
+          {errorText ? <p className="text-sm text-error">{errorText}</p> : null}
         </form>
       </div>
 

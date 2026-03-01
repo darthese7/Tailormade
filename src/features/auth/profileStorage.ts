@@ -28,10 +28,13 @@ export function getStoredUsername(phone: string): string | undefined {
   return profiles[key]?.username
 }
 
+export function hasStoredUsername(phone: string): boolean {
+  return Boolean(getStoredUsername(phone))
+}
+
 export function saveStoredUsername(phone: string, username: string): void {
   const key = normalizePhone(phone)
   const profiles = readProfiles()
   profiles[key] = { username: username.trim() }
   writeProfiles(profiles)
 }
-

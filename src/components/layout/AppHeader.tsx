@@ -17,7 +17,7 @@ export function AppHeader({
   className,
 }: AppHeaderProps) {
   return (
-    <header className={cn('border-b border-gray-200 pb-4', className)}>
+    <header className={cn('-mx-5 border-b border-gray-200 px-5 pb-4', className)}>
       <div className="flex items-center justify-between">
         <img src={logo} alt="Tailormade" className="h-8 w-auto" />
         {right ?? (
@@ -34,4 +34,3 @@ export function AppHeader({
     </header>
   )
 }
-
