@@ -13,6 +13,22 @@ export interface AuthOtpVerifyRequest {
   otp: string
 }
 
+export interface AuthLoginRequest {
+  phone: string
+  password: string
+}
+
+export interface AuthRegisterRequest {
+  phone: string
+  username: string
+  password: string
+}
+
+export interface AuthAdminResetPasswordRequest {
+  phone: string
+  newPassword: string
+}
+
 export interface AuthSession {
   token: string
   userId?: string

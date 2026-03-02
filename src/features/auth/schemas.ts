@@ -1,29 +1,34 @@
 import { z } from 'zod'
 import { normalizePhone } from '@/lib/utils/phone'
 
-export const requestOtpSchema = z.object({
+const phoneSchema = z
+  .string()
+  .min(10, 'Enter a valid phone number')
+  .transform((value) => normalizePhone(value))
+
+const passwordSchema = z
+  .string()
+  .trim()
+  .min(6, 'Password must be at least 6 characters')
+  .max(64, 'Password must be 64 characters or less')
+
+export const loginSchema = z.object({
+  phone: phoneSchema,
+  password: passwordSchema,
+})
+
+export const signupSchema = z.object({
   phone: z
     .string()
     .min(10, 'Enter a valid phone number')
     .transform((value) => normalizePhone(value)),
-})
-
-export const verifyOtpSchema = z.object({
-  otp: z
-    .string()
-    .trim()
-    .min(4, 'OTP must be at least 4 digits')
-    .max(6, 'OTP must be at most 6 digits'),
-})
-
-export const usernameSchema = z.object({
   username: z
     .string()
     .trim()
     .min(2, 'Username must be at least 2 characters')
     .max(30, 'Username must be 30 characters or less'),
+  password: passwordSchema,
 })
 
-export type RequestOtpSchemaInput = z.infer<typeof requestOtpSchema>
-export type VerifyOtpSchemaInput = z.infer<typeof verifyOtpSchema>
-export type UsernameSchemaInput = z.infer<typeof usernameSchema>
+export type LoginSchemaInput = z.infer<typeof loginSchema>
+export type SignupSchemaInput = z.infer<typeof signupSchema>

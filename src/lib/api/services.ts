@@ -1,14 +1,10 @@
-import {
-  isDemoAuthEnabled,
-  requestDemoOtp,
-  verifyDemoOtp,
-} from '@/features/auth/demoMode'
 import { apiClient } from '@/lib/api/client'
 import { endpoints } from '@/lib/api/endpoints'
 import { mockDb } from '@/lib/api/mockDb'
 import {
-  AuthOtpRequest,
-  AuthOtpVerifyRequest,
+  AuthAdminResetPasswordRequest,
+  AuthLoginRequest,
+  AuthRegisterRequest,
   AuthSession,
   CreateJobFromMeasurementInput,
   Customer,
@@ -26,33 +22,22 @@ import {
 const USE_MOCK_API = !import.meta.env.VITE_API_BASE_URL
 
 export const authService = {
-  requestOtp: async (payload: AuthOtpRequest & { mode: 'login' | 'signup' }) => {
-    const endpoint = payload.mode === 'signup' ? endpoints.authRegister : endpoints.authLogin
-    try {
-      return await apiClient.post<{ success: boolean; message?: string }>(
-        endpoint,
-        { phone: payload.phone },
-      )
-    } catch (error) {
-      if (isDemoAuthEnabled()) {
-        return requestDemoOtp(payload.phone, payload.mode)
-      }
-      throw error
-    }
-  },
-  verifyOtp: async (payload: AuthOtpVerifyRequest & { mode: 'login' | 'signup' }) => {
-    try {
-      return await apiClient.post<AuthSession>(endpoints.authVerifyOtp, {
-        phone: payload.phone,
-        otp: payload.otp,
-      })
-    } catch (error) {
-      if (isDemoAuthEnabled()) {
-        return verifyDemoOtp(payload.phone, payload.otp, payload.mode)
-      }
-      throw error
-    }
-  },
+  register: async (payload: AuthRegisterRequest) =>
+    apiClient.post<AuthSession>(endpoints.authRegister, payload),
+  login: async (payload: AuthLoginRequest) =>
+    apiClient.post<AuthSession>(endpoints.authLogin, payload),
+  updateProfile: async (payload: { username: string }, token?: string) =>
+    apiClient.patch<AuthSession>(endpoints.authProfile, payload, { token }),
+  adminResetPassword: async (payload: AuthAdminResetPasswordRequest, adminSecret: string) =>
+    apiClient.post<{ success: boolean; message?: string }>(
+      endpoints.authAdminResetPassword,
+      payload,
+      {
+        headers: {
+          'x-admin-secret': adminSecret,
+        },
+      },
+    ),
 }
 
 export const customerService = {

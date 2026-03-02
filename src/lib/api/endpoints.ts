@@ -2,6 +2,8 @@ export const endpoints = {
   authRegister: '/auth/register',
   authLogin: '/auth/login',
   authVerifyOtp: '/auth/verify-otp',
+  authProfile: '/auth/profile',
+  authAdminResetPassword: '/admin/reset-password',
   customers: '/customers',
   customersMeasurements: (customerId: string) => `/customers/${customerId}/measurements`,
   measurementById: (measurementId: string) => `/measurements/${measurementId}`,

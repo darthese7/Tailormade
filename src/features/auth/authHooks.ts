@@ -1,15 +1,14 @@
 import { useMutation } from '@tanstack/react-query'
 import { authService } from '@/lib/api/services'
 
-export function useRequestOtpMutation() {
+export function useRegisterMutation() {
   return useMutation({
-    mutationFn: authService.requestOtp,
+    mutationFn: authService.register,
   })
 }
 
-export function useVerifyOtpMutation() {
+export function useLoginMutation() {
   return useMutation({
-    mutationFn: authService.verifyOtp,
+    mutationFn: authService.login,
   })
 }
-

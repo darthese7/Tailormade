@@ -11,9 +11,9 @@ import {
 } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import logo from '@/assets/logo.svg'
-import { saveStoredUsername } from '@/features/auth/profileStorage'
 import { useDashboardQuery } from '@/features/dashboard/dashboardHooks'
 import { useSessionStore } from '@/features/auth/sessionStore'
+import { authService } from '@/lib/api/services'
 
 interface MetricCardProps {
   title: string
@@ -69,7 +69,7 @@ export function DashboardPage() {
     mostFrequentCustomers: [],
   }
 
-  const handleEditUsername = () => {
+  const handleEditUsername = async () => {
     setIsMenuOpen(false)
     if (!session) {
       return
@@ -87,8 +87,12 @@ export function DashboardPage() {
       return
     }
 
-    saveStoredUsername(session.phone, trimmed)
-    setSession({ ...session, username: trimmed })
+    try {
+      const updatedSession = await authService.updateProfile({ username: trimmed }, session.token)
+      setSession(updatedSession)
+    } catch {
+      window.alert('Could not update username right now.')
+    }
   }
 
   const handleLogout = () => {
@@ -110,7 +114,7 @@ export function DashboardPage() {
 
       <div className="-mx-5 border-b border-gray-200 px-5 pb-4">
         <div className="flex items-center justify-between">
-          <img src={logo} alt="Tailormade" className="h-8 w-auto" />
+          <img src={logo} alt="Tailormade" className="h-7 w-auto" />
 
           <div className="relative z-40">
             <button
@@ -127,7 +131,7 @@ export function DashboardPage() {
               <div className="absolute right-0 mt-2 w-44 rounded-xl border border-gray-200 bg-white py-1 shadow-sm">
                 <button
                   type="button"
-                  onClick={handleEditUsername}
+                  onClick={() => void handleEditUsername()}
                   className="tap-feedback flex h-12 w-full items-center gap-2 px-3 text-left text-sm font-medium text-gray-800 hover:bg-gray-50"
                 >
                   <PencilLine size={16} />

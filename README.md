@@ -13,7 +13,7 @@ Tailormade is a mobile-first web OS for Nigerian tailors. It replaces notebooks,
 
 ## Features Included (MVP)
 
-- Auth flow: Phone -> OTP verify
+- Auth flow: phone + password
 - Dashboard: overdue/due metrics, monthly income, frequent customers, pending sync badge
 - Customers: list/search/add + duplicate phone handling
 - Customer profile: WhatsApp deep link, Active/Past jobs tabs
@@ -50,15 +50,24 @@ npm run dev
 npm run build
 ```
 
+5. Run the backend API (phone + password auth, no OTP):
+
+```bash
+npm run server
+```
+
 ## Environment Variables
 
-- `VITE_API_BASE_URL`: backend base URL. Leave empty to use same-origin paths.
-- `VITE_DEMO_AUTH`: `true`/`false`. If unset, demo auth auto-enables when `VITE_API_BASE_URL` is empty.
+- `VITE_API_BASE_URL`: backend base URL, e.g. `http://127.0.0.1:4000`
+- `VITE_DEMO_AUTH`: keep `false` when using the real backend
+- `VITE_SUPPORT_WHATSAPP_PHONE`: support line used by the Forgot Password WhatsApp link
 
 ## Scripts
 
 - `npm run dev` - start development server
 - `npm run build` - typecheck + production build
+- `npm run server` - start the local backend API on port 4000
+- `npm run server:dev` - start the backend with Node watch mode
 - `npm run test` - run Vitest test suite
 - `npm run test:watch` - watch mode tests
 
@@ -77,6 +86,41 @@ PWA icon files:
 - `public/icons/icon-512-maskable.png`
 
 When deployed over HTTPS (for example on Vercel), supported browsers will offer install prompts / Add to Home Screen.
+
+## Local Backend
+
+Tailormade now includes a local backend in `server/index.cjs`.
+
+- Storage: file-backed JSON at `server/data/runtime.json`
+- Auth: `phone + password` (no OTP cost)
+- Default port: `4000`
+- Admin reset secret: `tailormade-local-admin` by default (override with `ADMIN_RESET_SECRET`)
+
+Core backend routes:
+
+- `POST /auth/register`
+- `POST /auth/login`
+- `PATCH /auth/profile`
+- `POST /auth/verify-otp` (returns a message that OTP is disabled)
+- `POST /admin/reset-password`
+- `GET /customers`
+- `POST /customers`
+- `GET /customers/:customerId/measurements`
+- `POST /customers/:customerId/measurements`
+- `DELETE /measurements/:measurementId`
+- `POST /measurements/:measurementId/create-job`
+- `PATCH /measurements/:measurementId/create-job`
+- `GET /jobs`
+- `POST /jobs`
+- `PATCH /jobs/:jobId`
+- `GET /dashboard`
+
+Current limitation:
+
+- Password recovery is support-assisted:
+  - users tap `Forgot Password`
+  - users contact support on WhatsApp
+  - support resets the password through the admin reset endpoint
 
 ## Project Structure
 
