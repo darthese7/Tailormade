@@ -44,6 +44,12 @@ cp .env.example .env
 npm run dev
 ```
 
+4. Build the production bundle (also validates the PWA manifest/service worker setup):
+
+```bash
+npm run build
+```
+
 ## Environment Variables
 
 - `VITE_API_BASE_URL`: backend base URL. Leave empty to use same-origin paths.
@@ -55,6 +61,22 @@ npm run dev
 - `npm run build` - typecheck + production build
 - `npm run test` - run Vitest test suite
 - `npm run test:watch` - watch mode tests
+
+## PWA Support
+
+Tailormade is configured as a Progressive Web App using `vite-plugin-pwa`.
+
+- Manifest is generated from `vite.config.ts`
+- Service worker is registered in `src/main.tsx`
+- App icons live in `public/icons/`
+
+PWA icon files:
+
+- `public/icons/icon-192.png`
+- `public/icons/icon-512.png`
+- `public/icons/icon-512-maskable.png`
+
+When deployed over HTTPS (for example on Vercel), supported browsers will offer install prompts / Add to Home Screen.
 
 ## Project Structure
 
