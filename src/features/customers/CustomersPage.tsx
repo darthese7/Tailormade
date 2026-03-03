@@ -28,7 +28,7 @@ export function CustomersPage() {
       <AppHeader />
 
       <section className="mt-8">
-        <h1 className="text-4xl font-semibold tracking-tight leading-tight text-black">
+        <h1 className="text-3xl font-semibold tracking-tight leading-tight text-black">
           Customers
         </h1>
         <p className="mt-2 text-base text-gray-500 leading-relaxed">
@@ -72,7 +72,7 @@ export function CustomersPage() {
       {!customersQuery.isLoading && !customersQuery.isError ? (
         filteredCustomers.length === 0 ? (
           <div className="min-h-[45vh] flex items-center justify-center">
-            <p className="text-xl font-semibold text-gray-700">No customers yet</p>
+            <p className="text-lg font-semibold text-gray-700">No customers yet</p>
           </div>
         ) : (
           <div className="mt-6 space-y-6">

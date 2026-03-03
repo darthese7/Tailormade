@@ -114,7 +114,7 @@ export function DashboardPage() {
 
       <div className="-mx-5 border-b border-gray-200 px-5 pb-4">
         <div className="flex items-center justify-between">
-          <img src={logo} alt="Tailormade" className="h-7 w-auto" />
+          <img src={logo} alt="Tailormade" className="h-8 w-auto" />
 
           <div className="relative z-40">
             <button

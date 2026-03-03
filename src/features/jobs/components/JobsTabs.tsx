@@ -9,7 +9,7 @@ interface JobsTabsProps {
 
 function CountBadge({ value }: { value: number }) {
   return (
-    <span className="inline-flex h-7 min-w-7 items-center justify-center rounded-full bg-gray-100 px-2 text-sm font-semibold text-gray-700">
+    <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-gray-100 px-2 text-xs font-semibold text-gray-700">
       {value}
     </span>
   )
@@ -27,11 +27,11 @@ export function JobsTabs({
         type="button"
         onClick={() => onChange('ongoing')}
         className={[
-          'tap-feedback h-14 rounded-xl text-xl font-semibold',
+          'tap-feedback h-12 rounded-xl text-lg font-semibold',
           activeTab === 'ongoing' ? 'bg-black text-white' : 'bg-transparent text-gray-500',
         ].join(' ')}
       >
-        <span className="inline-flex items-center gap-3">
+        <span className="inline-flex items-center gap-2">
           Ongoing
           <CountBadge value={ongoingCount} />
         </span>
@@ -41,11 +41,11 @@ export function JobsTabs({
         type="button"
         onClick={() => onChange('delivered')}
         className={[
-          'tap-feedback h-14 rounded-xl text-xl font-semibold',
+          'tap-feedback h-12 rounded-xl text-lg font-semibold',
           activeTab === 'delivered' ? 'bg-black text-white' : 'bg-transparent text-gray-500',
         ].join(' ')}
       >
-        <span className="inline-flex items-center gap-3">
+        <span className="inline-flex items-center gap-2">
           Delivered
           <CountBadge value={deliveredCount} />
         </span>

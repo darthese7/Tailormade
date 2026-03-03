@@ -19,7 +19,7 @@ export function AppHeader({
   return (
     <header className={cn('-mx-5 border-b border-gray-200 px-5 pb-4', className)}>
       <div className="flex items-center justify-between">
-        <img src={logo} alt="Tailormade" className="h-7 w-auto" />
+        <img src={logo} alt="Tailormade" className="h-8 w-auto" />
         {right ?? (
           <button
             type="button"

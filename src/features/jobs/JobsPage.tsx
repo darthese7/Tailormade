@@ -71,7 +71,7 @@ export function JobsPage() {
       <AppHeader />
 
       <section className="mt-8">
-        <h1 className="text-4xl font-semibold tracking-tight leading-tight text-black">Jobs</h1>
+        <h1 className="text-3xl font-semibold tracking-tight leading-tight text-black">Jobs</h1>
         <p className="mt-2 text-base text-gray-500 leading-relaxed">
           Keep track of what&apos;s due and what&apos;s done.
         </p>
@@ -120,7 +120,7 @@ export function JobsPage() {
       {!jobsQuery.isLoading && !jobsQuery.isError ? (
         filteredJobs.length === 0 ? (
           <div className="min-h-[45vh] flex items-center justify-center">
-            <p className="text-xl font-semibold text-gray-700">No jobs currently</p>
+            <p className="text-lg font-semibold text-gray-700">No jobs currently</p>
           </div>
         ) : (
           <div className="mt-6 space-y-6">

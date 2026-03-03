@@ -26,7 +26,7 @@ function WhatsAppIcon({ className }: { className?: string }) {
 
 function CountBadge({ count }: { count: number }) {
   return (
-    <span className="inline-flex h-7 min-w-7 items-center justify-center rounded-full bg-gray-100 px-2 text-sm font-semibold text-gray-700">
+    <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-gray-100 px-2 text-xs font-semibold text-gray-700">
       {count}
     </span>
   )
@@ -53,8 +53,8 @@ export function CustomerProfilePage() {
           <Skeleton className="h-6 w-40" />
           <Skeleton className="h-5 w-44" />
           <div className="grid grid-cols-2 gap-4">
-            <Skeleton className="h-14 w-full" />
-            <Skeleton className="h-14 w-full" />
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-12 w-full" />
           </div>
           {Array.from({ length: 3 }).map((_, index) => (
             <div key={`customer-profile-skeleton-${index}`} className="rounded-2xl border border-gray-200 p-6">
@@ -122,11 +122,11 @@ export function CustomerProfilePage() {
             type="button"
             onClick={() => setTab('active')}
             className={[
-              'tap-feedback h-14 rounded-xl text-xl font-semibold',
+              'tap-feedback h-12 rounded-xl text-lg font-semibold',
               tab === 'active' ? 'bg-black text-white' : 'bg-transparent text-gray-500',
             ].join(' ')}
           >
-            <span className="inline-flex items-center gap-3">
+            <span className="inline-flex items-center gap-2">
               Active Jobs
               <CountBadge count={activeJobs.length} />
             </span>
@@ -135,11 +135,11 @@ export function CustomerProfilePage() {
             type="button"
             onClick={() => setTab('past')}
             className={[
-              'tap-feedback h-14 rounded-xl text-xl font-semibold',
+              'tap-feedback h-12 rounded-xl text-lg font-semibold',
               tab === 'past' ? 'bg-black text-white' : 'bg-transparent text-gray-500',
             ].join(' ')}
           >
-            <span className="inline-flex items-center gap-3">
+            <span className="inline-flex items-center gap-2">
               Past Jobs
               <CountBadge count={pastJobs.length} />
             </span>
@@ -148,7 +148,7 @@ export function CustomerProfilePage() {
 
         {jobs.length === 0 ? (
           <div className="min-h-[24vh] flex items-center justify-center">
-            <p className="text-xl font-semibold text-gray-700">No jobs currently</p>
+            <p className="text-lg font-semibold text-gray-700">No jobs currently</p>
           </div>
         ) : (
           <div className="mt-6 space-y-6">

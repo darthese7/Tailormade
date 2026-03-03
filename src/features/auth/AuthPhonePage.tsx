@@ -1,9 +1,11 @@
 import { useState } from 'react'
+import { Download } from 'lucide-react'
 import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { ApiError } from '@/lib/api/client'
 import logo from '@/assets/logo.svg'
+import { useToast } from '@/components/primitives'
 import { useLoginMutation, useRegisterMutation } from '@/features/auth/authHooks'
 import {
   loginSchema,
@@ -13,6 +15,7 @@ import {
 } from '@/features/auth/schemas'
 import { useSessionStore } from '@/features/auth/sessionStore'
 import { Button, Input } from '@/components/primitives'
+import { useInstallPromptStore } from '@/lib/pwa/installPromptStore'
 import { cn } from '@/lib/utils/cn'
 import { phoneForWhatsapp } from '@/lib/utils/phone'
 
@@ -25,10 +28,13 @@ function errorMessage(error: unknown, fallback: string): string {
 
 export function AuthPhonePage() {
   const navigate = useNavigate()
+  const pushToast = useToast()
   const session = useSessionStore((state) => state.session)
   const authMode = useSessionStore((state) => state.authMode)
   const setAuthMode = useSessionStore((state) => state.setAuthMode)
   const setSession = useSessionStore((state) => state.setSession)
+  const canInstall = useInstallPromptStore((state) => state.canInstall)
+  const promptInstall = useInstallPromptStore((state) => state.promptInstall)
   const loginMutation = useLoginMutation()
   const registerMutation = useRegisterMutation()
   const [showSupportHelp, setShowSupportHelp] = useState(false)
@@ -73,6 +79,15 @@ export function AuthPhonePage() {
     navigate('/home', { replace: true })
   })
 
+  const handleInstallApp = async () => {
+    const outcome = await promptInstall()
+    if (outcome === 'accepted') {
+      pushToast('Tailormade installed', 'success')
+    } else if (outcome === 'dismissed') {
+      pushToast('Install cancelled', 'info')
+    }
+  }
+
   const loginError = loginMutation.isError
     ? errorMessage(loginMutation.error, 'Could not log in. Try again.')
     : ''
@@ -88,7 +103,7 @@ export function AuthPhonePage() {
     <div className="min-h-screen bg-white">
       <div className="max-w-md mx-auto px-5 pt-4 pb-32">
         <header className="-mx-5 border-b border-gray-200 px-5 pb-4">
-          <img src={logo} alt="Tailormade" className="h-7 w-auto" />
+          <img src={logo} alt="Tailormade" className="h-8 w-auto" />
         </header>
 
         <section className="mt-6">
@@ -131,6 +146,17 @@ export function AuthPhonePage() {
               ? 'Log in with your phone number and password.'
               : 'Create your account with your phone number, username, and password.'}
           </p>
+
+          {authMode === 'login' && canInstall ? (
+            <button
+              type="button"
+              onClick={() => void handleInstallApp()}
+              className="tap-feedback mt-4 inline-flex h-12 min-h-12 w-full items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-4 text-sm font-semibold text-gray-900"
+            >
+              <Download size={16} />
+              Install Tailormade
+            </button>
+          ) : null}
         </section>
 
         {authMode === 'login' ? (
