@@ -3,6 +3,7 @@ export const endpoints = {
   authLogin: '/auth/login',
   authVerifyOtp: '/auth/verify-otp',
   authProfile: '/auth/profile',
+  authPassword: '/auth/password',
   authAdminResetPassword: '/admin/reset-password',
   customers: '/customers',
   customersMeasurements: (customerId: string) => `/customers/${customerId}/measurements`,

@@ -29,6 +29,11 @@ export interface AuthAdminResetPasswordRequest {
   newPassword: string
 }
 
+export interface AuthChangePasswordRequest {
+  currentPassword: string
+  newPassword: string
+}
+
 export interface AuthSession {
   token: string
   userId?: string

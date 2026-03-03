@@ -2,6 +2,7 @@ import { apiClient } from '@/lib/api/client'
 import { endpoints } from '@/lib/api/endpoints'
 import { mockDb } from '@/lib/api/mockDb'
 import {
+  AuthChangePasswordRequest,
   AuthAdminResetPasswordRequest,
   AuthLoginRequest,
   AuthRegisterRequest,
@@ -28,6 +29,12 @@ export const authService = {
     apiClient.post<AuthSession>(endpoints.authLogin, payload),
   updateProfile: async (payload: { username: string }, token?: string) =>
     apiClient.patch<AuthSession>(endpoints.authProfile, payload, { token }),
+  changePassword: async (payload: AuthChangePasswordRequest, token?: string) =>
+    apiClient.patch<{ success: boolean; message?: string }>(
+      endpoints.authPassword,
+      payload,
+      { token },
+    ),
   adminResetPassword: async (payload: AuthAdminResetPasswordRequest, adminSecret: string) =>
     apiClient.post<{ success: boolean; message?: string }>(
       endpoints.authAdminResetPassword,
