@@ -4,7 +4,7 @@ import { Eye, EyeOff } from 'lucide-react'
 import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Navigate, useNavigate } from 'react-router-dom'
-import { ApiError } from '@/lib/api/client'
+import { ApiError, NetworkError } from '@/lib/api/client'
 import logo from '@/assets/logo.svg'
 import { useToast } from '@/components/primitives'
 import { useLoginMutation, useRegisterMutation } from '@/features/auth/authHooks'
@@ -22,6 +22,12 @@ import { phoneForWhatsapp } from '@/lib/utils/phone'
 
 function errorMessage(error: unknown, fallback: string): string {
   if (error instanceof ApiError) {
+    return error.message
+  }
+  if (error instanceof NetworkError) {
+    return 'Could not reach the server. Check the backend deployment and CORS settings.'
+  }
+  if (error instanceof Error && error.message.trim()) {
     return error.message
   }
   return fallback
