@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Download } from 'lucide-react'
+import { Eye, EyeOff } from 'lucide-react'
 import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Navigate, useNavigate } from 'react-router-dom'
@@ -38,6 +39,8 @@ export function AuthPhonePage() {
   const loginMutation = useLoginMutation()
   const registerMutation = useRegisterMutation()
   const [showSupportHelp, setShowSupportHelp] = useState(false)
+  const [showLoginPassword, setShowLoginPassword] = useState(false)
+  const [showSignupPassword, setShowSignupPassword] = useState(false)
   const supportLine = String(import.meta.env.VITE_SUPPORT_WHATSAPP_PHONE ?? '').replace(
     /\D/g,
     '',
@@ -173,11 +176,21 @@ export function AuthPhonePage() {
 
             <Input
               label="Password"
-              type="password"
+              type={showLoginPassword ? 'text' : 'password'}
               placeholder="Enter your password"
               autoComplete="current-password"
               className="h-12"
               error={loginForm.formState.errors.password?.message}
+              endAdornment={
+                <button
+                  type="button"
+                  onClick={() => setShowLoginPassword((current) => !current)}
+                  className="tap-feedback inline-flex h-8 w-8 items-center justify-center rounded-full text-gray-500"
+                  aria-label={showLoginPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showLoginPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              }
               {...loginForm.register('password')}
             />
 
@@ -242,11 +255,21 @@ export function AuthPhonePage() {
 
             <Input
               label="Password"
-              type="password"
+              type={showSignupPassword ? 'text' : 'password'}
               placeholder="Create a password"
               autoComplete="new-password"
               className="h-12"
               error={signupForm.formState.errors.password?.message}
+              endAdornment={
+                <button
+                  type="button"
+                  onClick={() => setShowSignupPassword((current) => !current)}
+                  className="tap-feedback inline-flex h-8 w-8 items-center justify-center rounded-full text-gray-500"
+                  aria-label={showSignupPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showSignupPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              }
               {...signupForm.register('password')}
             />
 
