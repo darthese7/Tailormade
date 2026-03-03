@@ -187,7 +187,7 @@ function ProfileMenuButton({ avatarAriaLabel }: { avatarAriaLabel: string }) {
         </button>
 
         {isMenuOpen ? (
-          <div className="absolute right-0 z-40 mt-2 w-44 rounded-xl border border-gray-200 bg-white py-1 shadow-sm">
+          <div className="absolute right-0 z-40 mt-2 w-48 rounded-xl border border-gray-200 bg-white py-1 shadow-sm">
             <button
               type="button"
               onClick={() => void handleEditUsername()}
@@ -287,7 +287,7 @@ function ProfileMenuButton({ avatarAriaLabel }: { avatarAriaLabel: string }) {
             }
           />
 
-          <div className="grid grid-cols-2 gap-3 pt-2">
+          <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] gap-3 pt-2">
             <Button
               type="button"
               variant="secondary"
@@ -296,9 +296,13 @@ function ProfileMenuButton({ avatarAriaLabel }: { avatarAriaLabel: string }) {
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={isSavingPassword}>
-              {isSavingPassword ? 'Saving...' : 'Update'}
-            </Button>
+            <button
+              type="submit"
+              disabled={isSavingPassword}
+              className="tap-feedback inline-flex h-12 min-h-12 w-full items-center justify-center rounded-xl bg-black px-4 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {isSavingPassword ? 'Saving...' : 'Change password'}
+            </button>
           </div>
         </form>
       </Modal>
