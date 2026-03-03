@@ -1,19 +1,14 @@
-import { useState } from 'react'
 import { type LucideIcon } from 'lucide-react'
 import {
   AlertTriangle,
   Calendar,
   Clock,
   CreditCard,
-  LogOut,
-  PencilLine,
-  UserRound,
 } from 'lucide-react'
-import { Link, useNavigate } from 'react-router-dom'
-import logo from '@/assets/logo.svg'
+import { Link } from 'react-router-dom'
+import { AppHeader } from '@/components/layout'
 import { useDashboardQuery } from '@/features/dashboard/dashboardHooks'
 import { useSessionStore } from '@/features/auth/sessionStore'
-import { authService } from '@/lib/api/services'
 
 interface MetricCardProps {
   title: string
@@ -54,13 +49,8 @@ function MetricCard({
 }
 
 export function DashboardPage() {
-  const navigate = useNavigate()
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
   const dashboardQuery = useDashboardQuery()
-  const session = useSessionStore((state) => state.session)
   const username = useSessionStore((state) => state.session?.username)
-  const clearSession = useSessionStore((state) => state.clearSession)
-  const setSession = useSessionStore((state) => state.setSession)
   const metrics = dashboardQuery.data ?? {
     overdueJobs: 0,
     dueToday: 0,
@@ -69,87 +59,9 @@ export function DashboardPage() {
     mostFrequentCustomers: [],
   }
 
-  const handleEditUsername = async () => {
-    setIsMenuOpen(false)
-    if (!session) {
-      return
-    }
-
-    const currentUsername = session.username ?? ''
-    const input = window.prompt('Enter your username', currentUsername)
-    if (input === null) {
-      return
-    }
-
-    const trimmed = input.trim()
-    if (trimmed.length < 2) {
-      window.alert('Username must be at least 2 characters.')
-      return
-    }
-
-    try {
-      const updatedSession = await authService.updateProfile({ username: trimmed }, session.token)
-      setSession(updatedSession)
-    } catch {
-      window.alert('Could not update username right now.')
-    }
-  }
-
-  const handleLogout = () => {
-    setIsMenuOpen(false)
-    clearSession()
-    navigate('/auth', { replace: true })
-  }
-
   return (
     <div>
-      {isMenuOpen ? (
-        <button
-          type="button"
-          aria-label="Close menu"
-          className="fixed inset-0 z-30 bg-transparent"
-          onClick={() => setIsMenuOpen(false)}
-        />
-      ) : null}
-
-      <div className="-mx-5 border-b border-gray-200 px-5 pb-4">
-        <div className="flex items-center justify-between">
-          <img src={logo} alt="Tailormade" className="h-8 w-auto" />
-
-          <div className="relative z-40">
-            <button
-              type="button"
-              aria-label="Profile menu"
-              aria-expanded={isMenuOpen}
-              onClick={() => setIsMenuOpen((prev) => !prev)}
-              className="h-10 w-10 rounded-full bg-black flex items-center justify-center text-white tap-feedback"
-            >
-              <UserRound size={18} />
-            </button>
-
-            {isMenuOpen ? (
-              <div className="absolute right-0 mt-2 w-44 rounded-xl border border-gray-200 bg-white py-1 shadow-sm">
-                <button
-                  type="button"
-                  onClick={() => void handleEditUsername()}
-                  className="tap-feedback flex h-12 w-full items-center gap-2 px-3 text-left text-sm font-medium text-gray-800 hover:bg-gray-50"
-                >
-                  <PencilLine size={16} />
-                  Edit username
-                </button>
-                <button
-                  type="button"
-                  onClick={handleLogout}
-                  className="tap-feedback flex h-12 w-full items-center gap-2 px-3 text-left text-sm font-medium text-gray-800 hover:bg-gray-50"
-                >
-                  <LogOut size={16} />
-                  Logout
-                </button>
-              </div>
-            ) : null}
-          </div>
-        </div>
-      </div>
+      <AppHeader />
 
       <section className="mt-5">
         <h1 className="text-4xl leading-tight tracking-tight">

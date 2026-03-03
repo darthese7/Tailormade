@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Plus, Trash2, Upload, UserRound } from 'lucide-react'
+import { Plus, Trash2, Upload } from 'lucide-react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import logo from '@/assets/logo.svg'
+import { AppHeader } from '@/components/layout'
 import { Button, Input, useToast } from '@/components/primitives'
 import {
   useCustomersQuery,
@@ -475,18 +475,7 @@ export function NewJobPage() {
 
   return (
     <div className="pb-44">
-      <header className="-mx-5 border-b border-gray-200 px-5 pb-4">
-        <div className="flex items-center justify-between">
-          <img src={logo} alt="Tailormade" className="h-8 w-auto" />
-          <button
-            type="button"
-            className="h-10 w-10 rounded-full bg-black flex items-center justify-center text-white"
-            aria-label="Profile"
-          >
-            <UserRound size={18} />
-          </button>
-        </div>
-      </header>
+      <AppHeader />
 
       <section className="mt-6">
         <h2 className="text-2xl font-semibold leading-tight tracking-tight text-black">
