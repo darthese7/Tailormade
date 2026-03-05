@@ -10,6 +10,7 @@ interface JobCardProps {
   measurementName: string
   title?: string
   showMeasurementLine?: boolean
+  compact?: boolean
 }
 
 export function JobCard({
@@ -18,6 +19,7 @@ export function JobCard({
   measurementName,
   title,
   showMeasurementLine = true,
+  compact = false,
 }: JobCardProps) {
   return (
     <Link
@@ -26,10 +28,15 @@ export function JobCard({
     >
       <div className="p-6">
         <div className="flex items-start justify-between gap-4">
-          <h3 className="text-2xl font-semibold tracking-tight text-gray-900 leading-tight">
+          <h3
+            className={[
+              'font-semibold tracking-tight text-gray-900 leading-tight',
+              compact ? 'text-base' : 'text-xl',
+            ].join(' ')}
+          >
             {title ?? customerName}
           </h3>
-          <JobStatusPill status={job.status} />
+          <JobStatusPill status={job.status} compact />
         </div>
 
         {showMeasurementLine ? (
@@ -56,9 +63,14 @@ export function JobCard({
       </div>
 
       <div className="border-t border-gray-200 p-5">
-        <span className="inline-flex items-center gap-2 text-xl font-semibold text-gray-900 leading-tight">
+        <span
+          className={[
+            'inline-flex items-center gap-2 font-semibold text-gray-900 leading-tight',
+            compact ? 'text-sm' : 'text-lg',
+          ].join(' ')}
+        >
           View Details
-          <ArrowUpRight size={20} />
+          <ArrowUpRight size={compact ? 16 : 20} />
         </span>
       </div>
     </Link>

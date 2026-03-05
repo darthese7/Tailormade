@@ -1,13 +1,22 @@
-import { useState } from 'react'
-import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
+import { ChevronRight } from 'lucide-react'
+import { Link, Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { AppHeader } from '@/components/layout'
 import { Skeleton } from '@/components/primitives'
 import { useCustomersQuery } from '@/features/customers/customerHooks'
 import { JobCard } from '@/features/jobs/components'
 import { useJobsQuery } from '@/features/jobs/jobsHooks'
+import { useMeasurementRecordsQuery } from '@/features/measurements/measurementHooks'
+import { formatDateLabel } from '@/lib/utils/date'
 import { phoneForWhatsapp } from '@/lib/utils/phone'
 
-type ProfileTab = 'active' | 'past'
+type ProfileTab = 'measurements' | 'active' | 'past'
+
+function resolveProfileTab(input: string | null): ProfileTab {
+  if (input === 'active' || input === 'past' || input === 'measurements') {
+    return input
+  }
+  return 'measurements'
+}
 
 function WhatsAppIcon({ className }: { className?: string }) {
   return (
@@ -35,16 +44,29 @@ function CountBadge({ count }: { count: number }) {
 export function CustomerProfilePage() {
   const { customerId } = useParams()
   const navigate = useNavigate()
-  const [tab, setTab] = useState<ProfileTab>('active')
+  const [searchParams, setSearchParams] = useSearchParams()
 
   const customersQuery = useCustomersQuery()
   const jobsQuery = useJobsQuery()
+  const measurementsQuery = useMeasurementRecordsQuery(customerId)
 
   if (!customerId) {
     return <Navigate to="/customers" replace />
   }
 
-  if (customersQuery.isLoading || jobsQuery.isLoading) {
+  const tab = resolveProfileTab(searchParams.get('tab'))
+  const highlightedMeasurementId = searchParams.get('measurementId')
+
+  const setTab = (nextTab: ProfileTab) => {
+    const nextParams = new URLSearchParams(searchParams)
+    nextParams.set('tab', nextTab)
+    if (nextTab !== 'measurements') {
+      nextParams.delete('measurementId')
+    }
+    setSearchParams(nextParams, { replace: true })
+  }
+
+  if (customersQuery.isLoading || jobsQuery.isLoading || measurementsQuery.isLoading) {
     return (
       <div>
         <AppHeader />
@@ -52,12 +74,16 @@ export function CustomerProfilePage() {
           <Skeleton className="h-12 w-64" />
           <Skeleton className="h-6 w-40" />
           <Skeleton className="h-5 w-44" />
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-3 gap-4">
+            <Skeleton className="h-12 w-full" />
             <Skeleton className="h-12 w-full" />
             <Skeleton className="h-12 w-full" />
           </div>
           {Array.from({ length: 3 }).map((_, index) => (
-            <div key={`customer-profile-skeleton-${index}`} className="rounded-2xl border border-gray-200 p-6">
+            <div
+              key={`customer-profile-skeleton-${index}`}
+              className="rounded-2xl border border-gray-200 p-6"
+            >
               <Skeleton className="h-8 w-48" />
               <Skeleton className="mt-4 h-5 w-32" />
               <Skeleton className="mt-6 h-14 w-full" />
@@ -76,7 +102,8 @@ export function CustomerProfilePage() {
   const customerJobs = (jobsQuery.data ?? []).filter((job) => job.customerId === customerId)
   const activeJobs = customerJobs.filter((job) => job.status !== 'delivered')
   const pastJobs = customerJobs.filter((job) => job.status === 'delivered')
-  const jobs = tab === 'active' ? activeJobs : pastJobs
+  const measurements = measurementsQuery.data ?? []
+
   const whatsappPhone = phoneForWhatsapp(customer.phone).replace(/\D/g, '')
   const hasWhatsappPhone = whatsappPhone.length >= 13 && whatsappPhone.startsWith('234')
   const whatsappMessage = encodeURIComponent(
@@ -117,53 +144,132 @@ export function CustomerProfilePage() {
       </section>
 
       <section className="mt-8">
-        <div className="grid grid-cols-2 gap-4">
-          <button
-            type="button"
-            onClick={() => setTab('active')}
-            className={[
-              'tap-feedback h-12 rounded-xl text-lg font-semibold',
-              tab === 'active' ? 'bg-black text-white' : 'bg-transparent text-gray-500',
-            ].join(' ')}
-          >
-            <span className="inline-flex items-center gap-2">
-              Active Jobs
-              <CountBadge count={activeJobs.length} />
-            </span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setTab('past')}
-            className={[
-              'tap-feedback h-12 rounded-xl text-lg font-semibold',
-              tab === 'past' ? 'bg-black text-white' : 'bg-transparent text-gray-500',
-            ].join(' ')}
-          >
-            <span className="inline-flex items-center gap-2">
-              Past Jobs
-              <CountBadge count={pastJobs.length} />
-            </span>
-          </button>
+        <div className="-mx-1 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="inline-flex min-w-max gap-3 px-1">
+            <button
+              type="button"
+              onClick={() => setTab('measurements')}
+              className={[
+                'tap-feedback h-12 min-w-[148px] rounded-xl px-4 text-base font-semibold',
+                tab === 'measurements' ? 'bg-black text-white' : 'bg-transparent text-gray-500',
+              ].join(' ')}
+            >
+              <span className="inline-flex items-center gap-2">
+                Measurements
+                <CountBadge count={measurements.length} />
+              </span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setTab('active')}
+              className={[
+                'tap-feedback h-12 min-w-[136px] rounded-xl px-4 text-base font-semibold',
+                tab === 'active' ? 'bg-black text-white' : 'bg-transparent text-gray-500',
+              ].join(' ')}
+            >
+              <span className="inline-flex items-center gap-2">
+                Active Jobs
+                <CountBadge count={activeJobs.length} />
+              </span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setTab('past')}
+              className={[
+                'tap-feedback h-12 min-w-[128px] rounded-xl px-4 text-base font-semibold',
+                tab === 'past' ? 'bg-black text-white' : 'bg-transparent text-gray-500',
+              ].join(' ')}
+            >
+              <span className="inline-flex items-center gap-2">
+                Past Jobs
+                <CountBadge count={pastJobs.length} />
+              </span>
+            </button>
+          </div>
         </div>
 
-        {jobs.length === 0 ? (
-          <div className="min-h-[24vh] flex items-center justify-center">
-            <p className="text-lg font-semibold text-gray-700">No jobs currently</p>
-          </div>
-        ) : (
-          <div className="mt-6 space-y-6">
-            {jobs.map((job) => (
-              <JobCard
-                key={job.id}
-                job={job}
-                customerName={customer.name}
-                measurementName={job.measurementSnapshot.templateName?.trim() || 'Measurement'}
-                title={job.measurementSnapshot.templateName?.trim() || 'Measurement'}
-                showMeasurementLine={false}
-              />
-            ))}
-          </div>
-        )}
+        {tab === 'measurements' ? (
+          measurementsQuery.isError ? (
+            <p className="mt-10 text-base font-medium text-error">
+              Unable to load measurements.
+            </p>
+          ) : measurements.length === 0 ? (
+            <div className="min-h-[24vh] flex items-center justify-center">
+              <p className="text-lg font-semibold text-gray-700">No measurements yet</p>
+            </div>
+          ) : (
+            <div className="mt-6 space-y-4">
+              {measurements.map((measurement) => (
+                <Link
+                  key={measurement.id}
+                  to={`/customers/${customer.id}/measurements/${measurement.id}`}
+                  className={[
+                    'tap-feedback block rounded-2xl border bg-white p-4',
+                    highlightedMeasurementId === measurement.id
+                      ? 'border-black'
+                      : 'border-gray-200',
+                  ].join(' ')}
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="min-w-0">
+                      <h3 className="truncate text-lg font-semibold text-gray-900">
+                        {measurement.measurementName}
+                      </h3>
+                      <p className="mt-1 text-xs text-gray-500">
+                        Saved {formatDateLabel(measurement.createdAt)}
+                      </p>
+                    </div>
+                    <ChevronRight size={20} className="shrink-0 text-gray-500" />
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )
+        ) : null}
+
+        {tab === 'active' ? (
+          activeJobs.length === 0 ? (
+            <div className="min-h-[24vh] flex items-center justify-center">
+              <p className="text-lg font-semibold text-gray-700">No jobs currently</p>
+            </div>
+          ) : (
+            <div className="mt-6 space-y-6">
+              {activeJobs.map((job) => (
+                <JobCard
+                  key={job.id}
+                  job={job}
+                  customerName={customer.name}
+                  measurementName={job.measurementSnapshot.templateName?.trim() || 'Measurement'}
+                  title={job.measurementSnapshot.templateName?.trim() || 'Measurement'}
+                  showMeasurementLine={false}
+                  compact
+                />
+              ))}
+            </div>
+          )
+        ) : null}
+
+        {tab === 'past' ? (
+          pastJobs.length === 0 ? (
+            <div className="min-h-[24vh] flex items-center justify-center">
+              <p className="text-lg font-semibold text-gray-700">No jobs currently</p>
+            </div>
+          ) : (
+            <div className="mt-6 space-y-6">
+              {pastJobs.map((job) => (
+                <JobCard
+                  key={job.id}
+                  job={job}
+                  customerName={customer.name}
+                  measurementName={job.measurementSnapshot.templateName?.trim() || 'Measurement'}
+                  title={job.measurementSnapshot.templateName?.trim() || 'Measurement'}
+                  showMeasurementLine={false}
+                  compact
+                />
+              ))}
+            </div>
+          )
+        ) : null}
       </section>
 
       <div className="fixed left-0 right-0 bottom-24 z-20">

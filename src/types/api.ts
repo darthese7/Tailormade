@@ -100,8 +100,8 @@ export interface Job {
   id: string
   customerId: string
   customerName?: string
-  deliveryDate: string
-  agreedPrice: number
+  deliveryDate: string | null
+  agreedPrice: number | null
   status: JobStatus
   measurementSnapshot: MeasurementSnapshot
   measurementRecordId?: string | null
@@ -113,8 +113,8 @@ export interface Job {
 
 export interface JobCreateInput {
   customerId: string
-  deliveryDate: string
-  agreedPrice: number
+  deliveryDate?: string | null
+  agreedPrice?: number | null
   status: JobStatus
   measurementSnapshot: MeasurementSnapshot
   measurementRecordId?: string
@@ -123,8 +123,8 @@ export interface JobCreateInput {
 }
 
 export interface CreateJobFromMeasurementInput {
-  deliveryDate: string
-  agreedPrice: number
+  deliveryDate?: string | null
+  agreedPrice?: number | null
   status?: JobStatus
 }
 
@@ -133,8 +133,8 @@ export interface JobStatusUpdateInput {
 }
 
 export interface JobUpdateInput {
-  deliveryDate?: string
-  agreedPrice?: number
+  deliveryDate?: string | null
+  agreedPrice?: number | null
   status?: JobStatus
   measurementSnapshot?: MeasurementSnapshot
 }

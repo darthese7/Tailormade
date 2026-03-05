@@ -122,6 +122,18 @@ export const measurementService = {
       { token },
     )
   },
+  update: async (
+    measurementId: string,
+    payload: MeasurementRecordCreateInput,
+    token?: string,
+  ) => {
+    if (USE_MOCK_API) {
+      return mockDb.updateMeasurement(measurementId, payload)
+    }
+    return apiClient.patch<MeasurementRecord>(endpoints.measurementById(measurementId), payload, {
+      token,
+    })
+  },
   linkJob: async (measurementId: string, jobId: string, token?: string) => {
     if (USE_MOCK_API) {
       return mockDb.linkMeasurementToJob(measurementId, jobId)

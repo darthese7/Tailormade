@@ -83,14 +83,14 @@ export function CustomersPage() {
                 className="tap-feedback block overflow-hidden rounded-2xl border border-gray-200 bg-white"
               >
                 <div className="p-6">
-                  <h3 className="text-2xl font-semibold tracking-tight leading-tight text-gray-900">
+                  <h3 className="text-[20px] font-semibold tracking-tight leading-tight text-gray-900">
                     {customer.name}
                   </h3>
                   <p className="mt-3 text-base text-gray-500 leading-relaxed">{customer.phone}</p>
                 </div>
 
                 <div className="border-t border-gray-200 p-5">
-                  <span className="inline-flex items-center gap-2 text-xl font-semibold text-gray-900 leading-tight">
+                  <span className="inline-flex items-center gap-2 text-[16px] font-semibold text-gray-900 leading-tight">
                     View Profile
                     <ArrowUpRight size={20} />
                   </span>

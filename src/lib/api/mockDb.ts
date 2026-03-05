@@ -184,8 +184,8 @@ export const mockDb = {
       id: createId('job'),
       customerId: payload.customerId,
       customerName: customer?.name,
-      deliveryDate: payload.deliveryDate,
-      agreedPrice: payload.agreedPrice,
+      deliveryDate: payload.deliveryDate ?? null,
+      agreedPrice: payload.agreedPrice ?? null,
       status: payload.status,
       measurementSnapshot: payload.measurementSnapshot,
       measurementRecordId: payload.measurementRecordId,
@@ -290,6 +290,46 @@ export const mockDb = {
     return created
   },
 
+  updateMeasurement(
+    measurementId: string,
+    payload: MeasurementRecordCreateInput,
+  ): MeasurementRecord {
+    const state = readState()
+    const existing = state.measurements.find((item) => item.id === measurementId)
+
+    if (!existing) {
+      throw new ApiError(404, 'Measurement record not found')
+    }
+
+    const updated: MeasurementRecord = {
+      ...existing,
+      measurementName: payload.measurementName.trim(),
+      parts: payload.parts,
+      inspirationPhotos: payload.inspirationPhotos ?? [],
+      fabricPhotos: payload.fabricPhotos ?? [],
+    }
+
+    state.measurements = state.measurements.map((item) =>
+      item.id === measurementId ? updated : item,
+    )
+
+    if (existing.linkedJobId) {
+      state.jobs = state.jobs.map((job) => {
+        if (job.id !== existing.linkedJobId) {
+          return job
+        }
+        return {
+          ...job,
+          measurementSnapshot: measurementToSnapshot(updated),
+          updatedAt: nowIso(),
+        }
+      })
+    }
+
+    writeState(state)
+    return updated
+  },
+
   linkMeasurementToJob(measurementId: string, jobId: string): MeasurementRecord {
     const state = readState()
     const existing = state.measurements.find((item) => item.id === measurementId)
@@ -338,12 +378,25 @@ export const mockDb = {
       throw new ApiError(404, 'Customer not found')
     }
 
+    const deliveryDate = payload.deliveryDate?.trim() ? payload.deliveryDate.trim() : null
+    const agreedPrice =
+      payload.agreedPrice === null || payload.agreedPrice === undefined
+        ? null
+        : Number(payload.agreedPrice)
+
+    if (!deliveryDate && agreedPrice === null) {
+      throw new ApiError(400, 'Delivery date or agreed price is required.')
+    }
+    if (agreedPrice !== null && (!Number.isFinite(agreedPrice) || agreedPrice <= 0)) {
+      throw new ApiError(400, 'Agreed price must be greater than 0.')
+    }
+
     const createdJob: Job = {
       id: createId('job'),
       customerId: measurement.customerId,
       customerName: customer.name,
-      deliveryDate: payload.deliveryDate,
-      agreedPrice: payload.agreedPrice,
+      deliveryDate,
+      agreedPrice,
       status: payload.status ?? 'ongoing',
       measurementSnapshot: measurementToSnapshot(measurement),
       measurementRecordId: measurement.id,

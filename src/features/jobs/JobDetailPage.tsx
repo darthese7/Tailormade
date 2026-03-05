@@ -120,8 +120,8 @@ export function JobDetailPage() {
     : ''
   const currentDraft =
     draftByJobId[job.id] ?? {
-      deliveryDate: job.deliveryDate,
-      agreedPrice: String(job.agreedPrice),
+      deliveryDate: job.deliveryDate ?? '',
+      agreedPrice: job.agreedPrice === null ? '' : String(job.agreedPrice),
       measurementValues: defaultValuesByKey,
     }
 
@@ -143,12 +143,19 @@ export function JobDetailPage() {
   }
 
   const handleApplyChanges = async () => {
-    const agreedPrice = Number(currentDraft.agreedPrice)
-    if (!currentDraft.deliveryDate.trim()) {
-      pushToast('Delivery date is required.', 'error')
+    const hasDeliveryDate = Boolean(currentDraft.deliveryDate.trim())
+    const hasAgreedPrice = Boolean(currentDraft.agreedPrice.trim())
+
+    if (!hasDeliveryDate && !hasAgreedPrice) {
+      pushToast('Delivery date or agreed price is required.', 'error')
       return
     }
-    if (Number.isNaN(agreedPrice) || agreedPrice <= 0) {
+
+    const agreedPrice = hasAgreedPrice ? Number(currentDraft.agreedPrice) : null
+    if (
+      hasAgreedPrice &&
+      (agreedPrice === null || Number.isNaN(agreedPrice) || agreedPrice <= 0)
+    ) {
       pushToast('Agreed price must be greater than 0.', 'error')
       return
     }
@@ -165,7 +172,7 @@ export function JobDetailPage() {
       await updateJobMutation.mutateAsync({
         jobId: job.id,
         payload: {
-          deliveryDate: currentDraft.deliveryDate,
+          deliveryDate: hasDeliveryDate ? currentDraft.deliveryDate.trim() : null,
           agreedPrice,
           measurementSnapshot,
         },

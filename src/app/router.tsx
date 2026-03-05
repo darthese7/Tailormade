@@ -10,6 +10,7 @@ import { DashboardPage } from '@/features/dashboard/DashboardPage'
 import { JobDetailPage } from '@/features/jobs/JobDetailPage'
 import { JobsPage } from '@/features/jobs/JobsPage'
 import { NewJobPage } from '@/features/jobs/NewJobPage'
+import { MeasurementDetailPage } from '@/features/measurements/MeasurementDetailPage'
 
 export function AppRouter() {
   return (
@@ -27,6 +28,10 @@ export function AppRouter() {
             <Route path="/jobs" element={<JobsPage />} />
             <Route path="/jobs/new" element={<NewJobPage />} />
             <Route path="/jobs/:jobId" element={<JobDetailPage />} />
+            <Route
+              path="/customers/:customerId/measurements/:measurementId"
+              element={<MeasurementDetailPage />}
+            />
           </Route>
         </Route>
       </Routes>

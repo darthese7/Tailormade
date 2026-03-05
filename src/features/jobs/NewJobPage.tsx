@@ -423,7 +423,7 @@ export function NewJobPage() {
       const hasDeliveryDate = Boolean(values.deliveryDate?.trim())
       const hasAgreedPrice = Boolean(values.agreedPrice?.trim())
 
-      if (!(hasDeliveryDate && hasAgreedPrice)) {
+      if (!(hasDeliveryDate || hasAgreedPrice)) {
         discardDraft()
         reset(createDefaultFormValues())
         setRows(createDefaultRows())
@@ -444,8 +444,8 @@ export function NewJobPage() {
         measurementName: measurementRecord.measurementName,
         parts: measurementRecord.parts,
         payload: {
-          deliveryDate: values.deliveryDate ?? '',
-          agreedPrice: Number(values.agreedPrice),
+          deliveryDate: hasDeliveryDate ? values.deliveryDate?.trim() ?? '' : null,
+          agreedPrice: hasAgreedPrice ? Number(values.agreedPrice) : null,
           status: 'ongoing',
         },
       })

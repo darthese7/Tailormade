@@ -16,7 +16,10 @@ function endOfWeek(date: Date): Date {
   return startOfDay(copy)
 }
 
-export function formatCurrency(value: number): string {
+export function formatCurrency(value: number | null | undefined): string {
+  if (value === null || value === undefined || !Number.isFinite(value)) {
+    return 'Not set'
+  }
   return new Intl.NumberFormat('en-NG', {
     style: 'currency',
     currency: 'NGN',
@@ -24,7 +27,10 @@ export function formatCurrency(value: number): string {
   }).format(value)
 }
 
-export function formatDateLabel(dateInput: string): string {
+export function formatDateLabel(dateInput: string | null | undefined): string {
+  if (!dateInput) {
+    return 'Not set'
+  }
   const date = new Date(dateInput)
   if (Number.isNaN(date.getTime())) {
     return dateInput
@@ -37,7 +43,10 @@ export function formatDateLabel(dateInput: string): string {
   }).format(date)
 }
 
-export function formatDayMonth(dateInput: string): string {
+export function formatDayMonth(dateInput: string | null | undefined): string {
+  if (!dateInput) {
+    return 'Not set'
+  }
   const date = new Date(dateInput)
   if (Number.isNaN(date.getTime())) {
     return dateInput
@@ -67,23 +76,42 @@ export function calculateUrgencyMetrics(
   const deliveredJobs = jobs.filter((job) => job.status === 'delivered')
 
   const overdueJobs = activeJobs.filter((job) => {
+    if (!job.deliveryDate) {
+      return false
+    }
     const delivery = startOfDay(new Date(job.deliveryDate))
+    if (Number.isNaN(delivery.getTime())) {
+      return false
+    }
     return delivery < now
   }).length
 
-  const dueToday = activeJobs.filter((job) =>
-    sameDay(startOfDay(new Date(job.deliveryDate)), now),
-  ).length
+  const dueToday = activeJobs.filter((job) => {
+    if (!job.deliveryDate) {
+      return false
+    }
+    const delivery = startOfDay(new Date(job.deliveryDate))
+    if (Number.isNaN(delivery.getTime())) {
+      return false
+    }
+    return sameDay(delivery, now)
+  }).length
 
   const dueThisWeek = activeJobs.filter((job) => {
+    if (!job.deliveryDate) {
+      return false
+    }
     const delivery = startOfDay(new Date(job.deliveryDate))
+    if (Number.isNaN(delivery.getTime())) {
+      return false
+    }
     return delivery >= now && delivery <= weekEnd
   }).length
 
   const thisMonthIncome = deliveredJobs.reduce((sum, job) => {
     const deliveredAt = new Date(job.updatedAt)
     if (deliveredAt.getMonth() === month && deliveredAt.getFullYear() === year) {
-      return sum + job.agreedPrice
+      return sum + (job.agreedPrice ?? 0)
     }
     return sum
   }, 0)

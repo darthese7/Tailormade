@@ -32,8 +32,8 @@ export const takeMeasurementSchema = z.object({
 })
 
 export const createJobFromMeasurementSchema = z.object({
-  deliveryDate: z.string().trim().min(1, 'Delivery date is required'),
-  agreedPrice: z.number().positive('Agreed price must be greater than 0'),
+  deliveryDate: z.string().trim().optional().nullable(),
+  agreedPrice: z.number().positive('Agreed price must be greater than 0').optional().nullable(),
 })
 
 export type MeasurementPartInput = z.infer<typeof measurementPartInputSchema>

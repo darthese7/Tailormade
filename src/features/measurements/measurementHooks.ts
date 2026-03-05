@@ -53,8 +53,8 @@ function createTempJobFromMeasurement(input: {
   return {
     id: `offline-job-${Date.now()}`,
     customerId: input.customerId,
-    deliveryDate: input.payload.deliveryDate,
-    agreedPrice: input.payload.agreedPrice,
+    deliveryDate: input.payload.deliveryDate ?? null,
+    agreedPrice: input.payload.agreedPrice ?? null,
     status: input.payload.status ?? 'ongoing',
     measurementSnapshot: partsToSnapshot(input.measurementName, input.parts),
     measurementRecordId: input.measurementId,
@@ -152,6 +152,28 @@ export function useDeleteMeasurementMutation() {
       queryClient.invalidateQueries({
         queryKey: [...queryKeys.measurements, token, variables.customerId],
       })
+    },
+  })
+}
+
+export function useUpdateMeasurementMutation() {
+  const token = useSessionStore((state) => state.session?.token)
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (input: {
+      measurementId: string
+      customerId: string
+      payload: MeasurementRecordCreateInput
+    }) => {
+      return measurementService.update(input.measurementId, input.payload, token)
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: [...queryKeys.measurements, token, variables.customerId],
+      })
+      queryClient.invalidateQueries({ queryKey: queryKeys.jobs })
+      queryClient.invalidateQueries({ queryKey: queryKeys.dashboard })
     },
   })
 }

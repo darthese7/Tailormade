@@ -12,8 +12,8 @@ function createTempJob(payload: NewJobInput): Job {
   return {
     id: `offline-${Date.now()}`,
     customerId: payload.customerId,
-    deliveryDate: payload.deliveryDate,
-    agreedPrice: payload.agreedPrice,
+    deliveryDate: payload.deliveryDate ?? null,
+    agreedPrice: payload.agreedPrice ?? null,
     status: payload.status,
     measurementSnapshot: payload.measurementSnapshot,
     styleImageUrl: payload.styleImageUrl,
